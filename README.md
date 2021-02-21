@@ -50,3 +50,6 @@ weixin-js-sdk@1.3.2
 1. 动态改变 html 的 font-size,页面元素使用 rem 布局
 2. 设置基准值为 100px，那么 1rem 就等于 100px
 3. 由于网页默认打开都是 16px，所以基于 750 的 UI 图，html font-size 应该设置为 `屏幕宽度/750 * 100`
+
+蓝湖- 高效的产品设计协作平台
+https://lanhuapp.com/
