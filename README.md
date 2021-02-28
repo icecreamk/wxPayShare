@@ -53,3 +53,15 @@ weixin-js-sdk@1.3.2
 
 蓝湖- 高效的产品设计协作平台
 https://lanhuapp.com/
+
+#### 微信测试号授权（本地 host 域名映射）
+
+1. 通过修改本地 host
+   mac 系统
+
+> vi /etc/hosts
+
+2. 配置 devServer，参考`vue.config.js`
+
+3. 测试号：功能服务 修改 网页授权->输入回调页面域名 例如: www.example.com
+4. 配置授权跳转地址

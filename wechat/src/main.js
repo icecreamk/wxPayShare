@@ -3,12 +3,13 @@ import App from "./App.vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import Router from "./router";
-import './assets/css/base.css';
-import './assets/css/common.css';
-
-Vue.config.productionTip = false;
+import VueCookit from "vue-cookie";
+import "./assets/css/base.css";
+import "./assets/css/common.css";
 
 Vue.use(VueAxios, axios);
+Vue.use(VueCookit);
+Vue.config.productionTip = false;
 
 axios.interceptors.request.use(function() {});
 axios.interceptors.response.use(
