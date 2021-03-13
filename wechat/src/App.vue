@@ -7,27 +7,21 @@
 <script>
 import API from './api/index'
 import wx from 'weixin-js-sdk'
-import util from './util/index
+import util from './util/index'
 
 export default {
   name: "app",
   mounted() {
     this.checkUserAuth()
-    // 初始化
-    // const appID = ''
-    // const appsecret = ''
-    // const redirect_uri = 'http://m.kkk.com'
-    // const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appID}&redirect_uri=${redirect_uri}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirec`
-    // window.location = decodeURIComponent(url)
   },
   methods: {
     checkUserAuth: function () {
       const openId = this.$cookie.get('openId')
-      console.log(openId)
-      if (openId) {
+      alert(openId)
+      if (!openId) {
         window.location.href = API.wechatRedireact
       } else {
-        this.getWechatConfig()
+        // this.getWechatConfig()
       }
     },
     // 获取微信配置信息
