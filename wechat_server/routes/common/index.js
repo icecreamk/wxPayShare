@@ -13,3 +13,12 @@ exports.getAccessToken = function (code) {
     });
   });
 };
+exports.getUserInfo = function (access_token, openId) {
+  let userinfo = `https://api.weixin.qq.com/sns/userinfo?access_token=${access_token}&openid=${openId}&lang=zh_CN`;
+  return new Promise((resolve, reject) => {
+    request.get(userinfo, function (err, response, body) {
+      let result = util.handleResponse(err, response, body);
+      resolve(result);
+    });
+  });
+};

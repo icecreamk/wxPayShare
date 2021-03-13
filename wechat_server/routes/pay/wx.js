@@ -37,7 +37,9 @@ router.get("/getOpenId", async function (req, res) {
     const result = await common.getAccessToken(code);
     if (result.code == 0) {
       const data = result.data;
-      const expire_time = 1000 * 60 * 1;
+      let expire_time = 1000 * 60 * 60 * 1;
+      memoryCache.put("access_token", data.access_token, expire_time);
+      memoryCache.put("openId", data.openid, expire_time);
       res.cookie("openId", data.openid, {
         maxAge: expire_time,
       });
@@ -46,6 +48,13 @@ router.get("/getOpenId", async function (req, res) {
       res.json(result);
     }
   }
+});
+
+router.get("/getUserInfo", async function (req, res) {
+  const access_token = memoryCache.get("access_token");
+  const openId = memoryCache.get("openId");
+  let result = await common.getUserInfo(access_token, openId);
+  res.json(result);
 });
 
 module.exports = router;

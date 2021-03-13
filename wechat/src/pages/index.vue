@@ -1,6 +1,6 @@
 <template>
   <div class="index">
-    <!-- <img src="../assets/logo.png" class="header" alt=""> -->
+    <div class="nickname" v-if="userInfo" v-text="userInfo.nickname"></div>    
     <div class="btn-group">
       <button class="btn">pay</button>
       <button class="btn">share</button>
@@ -8,7 +8,38 @@
     </div>
   </div>
 </template>
-<script></script>
+<script>
+import API from './../api/index'
+export default {
+  name: 'index',
+  data(){
+    return {
+      userInfo:''
+    }
+  },
+  mounted(){
+    alert(this.$cookie.get('openId'))
+    if(this.$cookie.get('openId')){
+      this.getUserInfo();
+    }
+  },
+  methods:{
+    getUserInfo(){
+      alert('get')
+      this.$http.get(API.getUserInfo).then((response)=>{
+        let res = response.data;
+        this.userInfo = res.data;
+      });
+    },
+    recharge(){
+      this.$router.push('/pay')
+    },
+    activity(){
+      this.$router.push('/activity')
+    },
+  }
+}
+</script>
 <style>
   .index {
     background: #ddd;
