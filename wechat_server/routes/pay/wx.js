@@ -1,9 +1,9 @@
 const express = require("express");
-const request = require("request");
 const memoryCache = require("memory-cache");
 const config = require("./config");
 const router = express.Router();
-
+const common = require("./../common");
+const util = require("./../../util/util");
 router.get("/test", function (req, res) {
   res.cookie("test1", "123", {
     maxAge: 60 * 1000,
@@ -27,33 +27,24 @@ router.get("/redirect", function (req, res) {
 });
 
 // 根据code获取用户openId
-router.get("/getOpenId", function (req, res) {
+router.get("/getOpenId", async function (req, res) {
   const code = req.query.code;
   console.log("code", code);
   const wxConfig = config.wx;
-  const tokenUrl = `https://api.weixin.qq.com/sns/oauth2/access_token?appid=${wxConfig.appId}&secret=${wxConfig.appSecret}&code=${code}&grant_type=authorization_code`;
   if (!code) {
-    res.json({
-      code: 1001,
-      data: "",
-      message: "当前未获取到授权code码",
-    });
+    res.json(util.handleFail("当前未获取到授权code码"));
   } else {
-    request.get(tokenUrl, function (err, response, body) {
-      console.log("res", err, response.statusCode, body);
-      if (!err && response.statusCode === 200) {
-        const data = JSON.parse(body);
-        console.log("body", body);
-        const expire_time = 1000 * 60 * 1;
-        console.log("expire_time", expire_time, data.openid);
-        res.cookie("openId", data.openid, {
-          maxAge: expire_time,
-        });
-        console.log("url", memoryCache.get("redirectUrl"));
-        res.redirect(memoryCache.get("redirectUrl"));
-      } else {
-      }
-    });
+    const result = await common.getAccessToken(code);
+    if (result.code == 0) {
+      const data = result.data;
+      const expire_time = 1000 * 60 * 1;
+      res.cookie("openId", data.openid, {
+        maxAge: expire_time,
+      });
+      res.redirect(memoryCache.get("redirectUrl"));
+    } else {
+      res.json(result);
+    }
   }
 });
 
