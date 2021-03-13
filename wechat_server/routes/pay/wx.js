@@ -2,6 +2,7 @@ const express = require("express");
 const memoryCache = require("memory-cache");
 const config = require("./config");
 const router = express.Router();
+const createHash = require("create-hash");
 const common = require("./../common");
 const util = require("./../../util/util");
 router.get("/test", function (req, res) {
@@ -30,7 +31,6 @@ router.get("/redirect", function (req, res) {
 router.get("/getOpenId", async function (req, res) {
   const code = req.query.code;
   console.log("code", code);
-  const wxConfig = config.wx;
   if (!code) {
     res.json(util.handleFail("当前未获取到授权code码"));
   } else {
@@ -55,6 +55,47 @@ router.get("/getUserInfo", async function (req, res) {
   const openId = memoryCache.get("openId");
   let result = await common.getUserInfo(access_token, openId);
   res.json(result);
+});
+
+router.get("/jssdk", async function (req, res) {
+  const url = req.query.url;
+  const wxConfig = config.wx;
+
+  const result = await common.getToken();
+  if (result.code == 0) {
+    let token = result.data.access_token;
+    memoryCache.put("token", token);
+    const result2 = await common.getTicket(token);
+    if (result2.code == 0) {
+      const data = result2.data;
+      const params = {
+        noncestr: util.createNonceStr(),
+        jsapi_ticket: data.ticket,
+        timestamp: util.createTimeStamp(),
+        url,
+      };
+      const str = util.raw(params);
+      console.log("str:::" + JSON.stringify(params));
+      const sign = createHash("sha1").update(str).digest("hex");
+      res.json(
+        util.handleSuc({
+          appId: wxConfig.appId, // 必填，公众号的唯一标识
+          timestamp: params.timestamp, // 必填，生成签名的时间戳
+          nonceStr: params.noncestr, // 必填，生成签名的随机串
+          signature: sign, // 必填，签名
+          jsApiList: [
+            "updateAppMessageShareData",
+            "updateTimelineShareData",
+            "onMenuShareTimeline",
+            "onMenuShareAppMessage",
+            "onMenuShareQQ",
+            "onMenuShareQZone",
+            "chooseWXPay",
+          ], // 必填，需要使用的JS接口列表
+        })
+      );
+    }
+  }
 });
 
 module.exports = router;

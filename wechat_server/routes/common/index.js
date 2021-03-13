@@ -22,3 +22,27 @@ exports.getUserInfo = function (access_token, openId) {
     });
   });
 };
+// 获取基础接口的Token
+exports.getToken = function () {
+  const wxConfig = config.wx;
+
+  let token = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${wxConfig.appId}&secret=${wxConfig.appSecret}`;
+  return new Promise((resolve, reject) => {
+    request.get(token, function (err, response, body) {
+      console.log(response);
+      let result = util.handleResponse(err, response, body);
+      resolve(result);
+    });
+  });
+};
+
+// 根据Token获取Ticket(密钥)
+exports.getTicket = function (token) {
+  let tokenUrl = `https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${token}&type=jsapi`;
+  return new Promise((resolve, reject) => {
+    request.get(tokenUrl, function (err, response, body) {
+      let result = util.handleResponse(err, response, body);
+      resolve(result);
+    });
+  });
+};

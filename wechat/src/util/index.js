@@ -8,7 +8,7 @@ export default {
   },
   initShareInfo() {
     const shareInfo = {
-      title: "标题",
+      title: "标题111",
       desc: "简介",
       link: "http://m.kkk.com/#/index",
       imgUrl: "",
